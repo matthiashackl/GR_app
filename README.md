@@ -10,7 +10,14 @@ selected area. The user interface consists of an interactive map, plot, and text
 
 ## Installation
 
-'bokeh serve --show GR_app.py'
+```python
+bokeh serve --show GR_app.py
+```
+
 
 ## Dependencies
 
+* numpy
+* matplotlib
+* bokeh
+* pandas
