@@ -10,7 +10,7 @@ selected area. The user interface consists of an interactive map, plot, and text
 
 ## Installation
 
-```python
+```
 bokeh serve --show GR_app.py
 ```
 
