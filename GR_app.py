@@ -21,6 +21,8 @@ from bokeh.tile_providers import CARTODBPOSITRON, STAMEN_TERRAIN
 from bokeh.models import ColumnDataSource, HoverTool, Span
 from bokeh.models.widgets import Div
 
+from flask import Flask, render_template, request
+
 
 def read_gem_catalogue(fp='data/isc-gem-cat.csv'):
     """Reads in catalogue data"""
@@ -48,7 +50,7 @@ def get_hex_color(depths):
 
 def calculate_GR(catalogue):
     """Estimates the magnitude of completeness and fits Gutenberg Richter relation
-    'log(N) = a - b*mag' to the earthquake selection."""
+    log(N) = a - b * M to the earthquake selection."""
     
     try:
         number_of_events = len(catalogue)
@@ -82,6 +84,7 @@ def create_label(GR_dict):
 
 def callback(attr, old, new):
     """Estimates GR statistics and updates the UI upon earthquake selection."""
+
     print(len(eq_source.selected.indices), ' earthquakes selected')
     indices = eq_source.selected.indices
     GR_dict = calculate_GR(catalogue.iloc[indices])
@@ -158,6 +161,6 @@ gr.yaxis.axis_label = "Cumulative Annual Frequency"
 div = Div(text=create_label(GR_dict), width=400, height=400)
 
 ################################
-# return the final app
+# return the final html
 curdoc().add_root(column(mapa, row(gr, div)))
     

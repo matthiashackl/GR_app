@@ -21,3 +21,6 @@ bokeh serve --show GR_app.py
 * matplotlib
 * bokeh
 * pandas
+
+
+A test version of the available [here](http://ec2-18-196-129-109.eu-central-1.compute.amazonaws.com:5006/GR_app).
