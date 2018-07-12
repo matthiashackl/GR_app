@@ -1,4 +1,4 @@
-# GR_app
+# Seismicity App
 
 This simple Python app is intended to demo different programming aspects and provides an earthquake analyst with
 basic information about seismicity in an area of interest.
