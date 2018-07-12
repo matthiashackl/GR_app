@@ -8,7 +8,7 @@ context. It applies a set of libraries from the scientific Python stack to estim
 and fit the Gutenberg Richter relationship to the magnitude frequency distribution of the earthquakes in an user
 selected area. The user interface consists of an interactive map, plot, and text information.
 
-## Installation
+## Run the app
 
 ```
 bokeh serve --show GR_app.py
