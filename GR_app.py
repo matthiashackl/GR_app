@@ -139,9 +139,10 @@ hover = HoverTool(tooltips=[("Date", "@date"),
                             ("Depth (km)", "@depth")])
 
 mapa = figure(x_range=(-20000000, 20000000), y_range=(-5000000, 8000000),
-           x_axis_type="mercator", y_axis_type="mercator", title='Historic Earthquakes (1904 - 2014)',
-           tools=[hover,"pan,poly_select,wheel_zoom"], logo=None,
-           plot_width=1000)
+              x_axis_type="mercator", y_axis_type="mercator",
+              title='Historic Earthquakes (1904 - 2014) - Please select your area of interest',
+              tools=[hover,"pan,poly_select,wheel_zoom"], logo=None,
+              plot_width=1000)
 
 # plot base map
 mapa.add_tile(CARTODBPOSITRON)
