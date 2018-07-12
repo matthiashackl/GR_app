@@ -21,11 +21,11 @@ from bokeh.tile_providers import CARTODBPOSITRON, STAMEN_TERRAIN
 from bokeh.models import ColumnDataSource, HoverTool, Span
 from bokeh.models.widgets import Div
 
-from flask import Flask, render_template, request
-
 
 def read_gem_catalogue(fp='data/isc-gem-cat.csv'):
-    """Reads in catalogue data"""
+    """
+    Reads in catalogue data
+    """
     
     gem = pd.read_csv(fp, sep=',', skiprows=61)
     gem.columns = gem.columns.str.replace('\s+', '')
@@ -41,7 +41,9 @@ def read_gem_catalogue(fp='data/isc-gem-cat.csv'):
 
 
 def get_hex_color(depths):
-    """Returns hex (html) color as a function of depth"""
+    """
+    Returns hex (html) color as a function of depth
+    """
     
     cmap = cm.get_cmap('RdPu')
     colors = cmap(np.log(depths)/np.max(np.log(depths)))
@@ -49,8 +51,10 @@ def get_hex_color(depths):
 
 
 def calculate_GR(catalogue):
-    """Estimates the magnitude of completeness and fits Gutenberg Richter relation
-    log(N) = a - b * M to the earthquake selection."""
+    """
+    Estimates the magnitude of completeness and fits Gutenberg Richter relation
+    log(N) = a - b * M to the earthquake selection.
+    """
     
     try:
         number_of_events = len(catalogue)
@@ -66,7 +70,9 @@ def calculate_GR(catalogue):
 
 
 def line_fit(GR_dict):
-    """Returns line parameters based on a and b values."""
+    """
+    Returns line parameters based on a and b values.
+    """
 
     gr_x = GR_dict['mag']
     gr_y = 10**(GR_dict['a'] - gr_x * GR_dict['b'])
@@ -83,7 +89,9 @@ def create_label(GR_dict):
     
 
 def callback(attr, old, new):
-    """Estimates GR statistics and updates the UI upon earthquake selection."""
+    """
+    Estimates GR statistics and updates the UI upon earthquake selection.
+    """
 
     print(len(eq_source.selected.indices), ' earthquakes selected')
     indices = eq_source.selected.indices
@@ -125,7 +133,7 @@ hover = HoverTool(tooltips=[("Date", "@date"),
 
 mapa = figure(x_range=(-20000000, 20000000), y_range=(-5000000, 8000000),
            x_axis_type="mercator", y_axis_type="mercator", title='Earthquake Catalogue',
-           tools=[hover,"pan,poly_select,wheel_zoom,reset"],
+           tools=[hover,"pan,poly_select,wheel_zoom"], logo=None,
            plot_width=1000)
 
 # plot base map
@@ -147,7 +155,7 @@ gr = figure(plot_width=600, plot_height=400, title='Gutenberg Richter',
 gr_points = gr.circle('x', 'y', source=gr_source)
 
 gr_x, gr_y = line_fit(GR_dict)
-gr_line = gr.line(gr_x, gr_y, line_color='green', line_width=3)
+gr_line = gr.line(gr_x, gr_y, line_color='green', line_width=3, legend="Gutenberg Richter Fit")
 
 vline = Span(location=GR_dict['mc'], dimension='height', line_color='red', line_width=1)
 gr.renderers.extend([vline])
