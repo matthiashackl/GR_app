@@ -26,7 +26,6 @@ def read_gem_catalogue(fp='data/isc-gem-cat.csv'):
     """
     Reads in catalogue data
     """
-    
     gem = pd.read_csv(fp, sep=',', skiprows=61)
     gem.columns = gem.columns.str.replace('\s+', '')
     gem['date'] = pd.to_datetime(gem['#date'].str.strip())
@@ -44,7 +43,6 @@ def get_hex_color(depths):
     """
     Returns hex (html) color as a function of depth
     """
-    
     cmap = cm.get_cmap('RdPu')
     colors = cmap(np.log(depths)/np.max(np.log(depths)))
     return [rgb2hex(i) for i in colors]
@@ -55,13 +53,17 @@ def calculate_GR(catalogue):
     Estimates the magnitude of completeness and fits Gutenberg Richter relation
     log(N) = a - b * M to the earthquake selection.
     """
-    
     try:
         number_of_events = len(catalogue)
-        Mc = catalogue[['mw', 'date']].groupby('mw').count().idxmax().values[0]        
+
+        # estimate Mc through the maxiumum curvature method
+        Mc = catalogue[['mw', 'date']].groupby('mw').count().idxmax().values[0]
+
         number_of_years = catalogue['date'].max().year - catalogue['date'].min().year        
         magnitudes = np.arange(np.min(catalogue['mw']), np.max(catalogue['mw'])+0.1, 0.1)
         frequency = np.array([len(catalogue.loc[catalogue['mw']>=m]) for m in magnitudes])/number_of_years
+
+        # fit GR
         b,a = np.polyfit(magnitudes[magnitudes>Mc], np.log10(frequency[magnitudes>Mc]), 1)
         GR_dict = {'mag': magnitudes, 'freq': frequency, 'mc': Mc, 'b': -b, 'a': a, 'noe': number_of_events}
     except:
@@ -72,14 +74,20 @@ def calculate_GR(catalogue):
 def line_fit(GR_dict):
     """
     Returns line parameters based on a and b values.
+    :param GR_dict:
+    :return: x, y
     """
-
     gr_x = GR_dict['mag']
     gr_y = 10**(GR_dict['a'] - gr_x * GR_dict['b'])
     return (gr_x, gr_y)
 
 
 def create_label(GR_dict):
+    """
+    create the text output
+    :param GR_dict:
+    :return: div text
+    """
     text="""<h2>Gutenberg Richter parameters:</h2>
     <h3>Number of selected Events: <b>%i</b> </h3>
     <h3>Magnitude of completeness: <b>%.1f</b> </h3>           
@@ -92,7 +100,6 @@ def callback(attr, old, new):
     """
     Estimates GR statistics and updates the UI upon earthquake selection.
     """
-
     print(len(eq_source.selected.indices), ' earthquakes selected')
     indices = eq_source.selected.indices
     GR_dict = calculate_GR(catalogue.iloc[indices])
