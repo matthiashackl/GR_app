@@ -21,6 +21,7 @@ from bokeh.tile_providers import CARTODBPOSITRON, STAMEN_TERRAIN
 from bokeh.models import ColumnDataSource, HoverTool, Span
 from bokeh.models.widgets import Div
 
+CATALOGUE_YEARS = 110
 
 def read_gem_catalogue(fp='data/isc-gem-cat.csv'):
     """
@@ -53,18 +54,18 @@ def calculate_GR(catalogue):
     Estimates the magnitude of completeness and fits Gutenberg Richter relation
     log(N) = a - b * M to the earthquake selection.
     """
+    noy = CATALOGUE_YEARS
     try:
         number_of_events = len(catalogue)
 
         # estimate Mc through the maxiumum curvature method
         Mc = catalogue[['mw', 'date']].groupby('mw').count().idxmax().values[0]
 
-        number_of_years = catalogue['date'].max().year - catalogue['date'].min().year        
         magnitudes = np.arange(np.min(catalogue['mw']), np.max(catalogue['mw'])+0.1, 0.1)
-        frequency = np.array([len(catalogue.loc[catalogue['mw']>=m]) for m in magnitudes])/number_of_years
+        frequency = np.array([len(catalogue.loc[catalogue['mw']>=m]) for m in magnitudes])/noy
 
         # fit GR
-        b,a = np.polyfit(magnitudes[magnitudes>Mc], np.log10(frequency[magnitudes>Mc]), 1)
+        b, a = np.polyfit(magnitudes[magnitudes>Mc], np.log10(frequency[magnitudes>Mc]), 1)
         GR_dict = {'mag': magnitudes, 'freq': frequency, 'mc': Mc, 'b': -b, 'a': a, 'noe': number_of_events}
     except:
         div.text = "<h2>Not enough earthquakes selected</h2>"
@@ -179,4 +180,4 @@ div = Div(text=create_label(GR_dict), width=400, height=400)
 ################################
 # return the final html
 curdoc().add_root(column(mapa, row(gr, div)))
-    
+
